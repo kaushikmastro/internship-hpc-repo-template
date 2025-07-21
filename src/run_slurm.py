@@ -177,18 +177,20 @@ class ConfigProcessor:
         if replacement_value == match.group(0):  # No replacement found
             return replacement_value
 
+        # Type conversion mapping - functional approach
+        type_converters = {
+            "float": lambda x: float(x),
+            "int": lambda x: int(x),
+            "bool": lambda x: x.lower() == "true",
+            "list_int": lambda x: [int(i.strip()) for i in x.split(",")],
+            "str": lambda x: x,  # Default converter
+        }
+
+        converter = type_converters.get(type_hint, type_converters["str"])
+        
         try:
-            if type_hint == "float":
-                return float(replacement_value)
-            elif type_hint == "int":
-                return int(replacement_value)
-            elif type_hint == "bool":
-                return replacement_value.lower() == "true"
-            elif type_hint == "list_int":
-                return [int(x.strip()) for x in replacement_value.split(",")]
-            else:  # Default to string
-                return replacement_value
-        except (ValueError, AttributeError):
+            return converter(replacement_value)
+        except (ValueError, AttributeError, TypeError):
             return None
 
 
@@ -314,78 +316,76 @@ class SlurmJobManager:
             description="Submit SLURM jobs with YAML configuration support."
         )
         
-        # Required arguments
-        parser.add_argument(
-            "--config_file",
-            type=str,
-            required=True,
-            help="Path to the YAML configuration file.",
-        )
+        # Argument configuration mapping
+        argument_specs = {
+            # Required arguments
+            "config_file": {
+                "type": str,
+                "required": True,
+                "help": "Path to the YAML configuration file.",
+            },
+            
+            # Optional file/path arguments
+            "output_dir": {
+                "type": str,
+                "default": None,
+                "help": "Output directory path. Auto-generated if not specified.",
+            },
+            "template": {
+                "type": str,
+                "default": DEFAULT_TEMPLATE_PATH,
+                "help": f"Path to SLURM script template (default: {DEFAULT_TEMPLATE_PATH})",
+            },
+            "script": {
+                "type": str,
+                "default": DEFAULT_SCRIPT_PATH,
+                "help": f"Script to run (default: {DEFAULT_SCRIPT_PATH})",
+            },
+            "image": {
+                "type": str,
+                "default": DEFAULT_IMAGE_PATH,
+                "help": "Apptainer image to use",
+            },
+            
+            # Boolean flags
+            "dry": {
+                "action": "store_true",
+                "help": "Generate files without submitting job",
+            },
+            
+            # Resource arguments
+            "n_gpu": {
+                "type": int,
+                "default": 1,
+                "help": "Number of GPUs to use (default: 1)",
+            },
+            "time": {
+                "type": str,
+                "default": DEFAULT_TIME,
+                "help": f"Runtime in HH:MM:SS format (default: {DEFAULT_TIME})",
+            },
+            
+            # Job metadata
+            "job_name": {
+                "type": str,
+                "default": DEFAULT_JOB_NAME,
+                "help": f"Job name (default: {DEFAULT_JOB_NAME})",
+            },
+            "group_name": {
+                "type": str,
+                "default": DEFAULT_GROUP_NAME,
+                "help": f"Experiment group name (default: {DEFAULT_GROUP_NAME})",
+            },
+            "project_name": {
+                "type": str,
+                "default": DEFAULT_PROJECT_NAME,
+                "help": f"Project to charge (default: {DEFAULT_PROJECT_NAME})",
+            },
+        }
         
-        # Optional arguments with defaults
-        parser.add_argument(
-            "--output_dir",
-            type=str,
-            default=None,
-            help="Output directory path. Auto-generated if not specified.",
-        )
-        parser.add_argument(
-            "--template",
-            type=str,
-            default=DEFAULT_TEMPLATE_PATH,
-            help=f"Path to SLURM script template (default: {DEFAULT_TEMPLATE_PATH})",
-        )
-        parser.add_argument(
-            "--script",
-            type=str,
-            default=DEFAULT_SCRIPT_PATH,
-            help=f"Script to run (default: {DEFAULT_SCRIPT_PATH})",
-        )
-        parser.add_argument(
-            "--dry",
-            action="store_true",
-            help="Generate files without submitting job",
-        )
-        
-        # Resource arguments
-        parser.add_argument(
-            "--n_gpu",
-            type=int,
-            default=1,
-            help="Number of GPUs to use (default: 1)",
-        )
-        parser.add_argument(
-            "--time",
-            type=str,
-            default=DEFAULT_TIME,
-            help=f"Runtime in HH:MM:SS format (default: {DEFAULT_TIME})",
-        )
-        
-        # Job metadata
-        parser.add_argument(
-            "--job_name",
-            type=str,
-            default=DEFAULT_JOB_NAME,
-            help=f"Job name (default: {DEFAULT_JOB_NAME})",
-        )
-        parser.add_argument(
-            "--group_name",
-            type=str,
-            default=DEFAULT_GROUP_NAME,
-            help=f"Experiment group name (default: {DEFAULT_GROUP_NAME})",
-        )
-        parser.add_argument(
-            "--project_name",
-            type=str,
-            default=DEFAULT_PROJECT_NAME,
-            help=f"Project to charge (default: {DEFAULT_PROJECT_NAME})",
-        )
-        parser.add_argument(
-            "--image",
-            type=str,
-            default=DEFAULT_IMAGE_PATH,
-            help="Apptainer image to use",
-        )
+        # Use functional approach to add all arguments
+        for arg_name, spec in argument_specs.items():
+            parser.add_argument(f"--{arg_name}", **spec)
         
         return parser
 
