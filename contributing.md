@@ -60,6 +60,18 @@ Before you commit please install the pre-commit hooks. Only commit once they all
   - Branch naming convention is ```feature/feature_name```, ```bug/bug_name```, ```refactoring/refactoring_name```, etc.
 - Test coverage must be sufficient. 90% of your codebase must be covered by the tests in ```/tests```.
 
+#### Testing Best Practices
+
+**Unit Tests**: Unit tests verify individual functions, methods, or classes in isolation. They test components independently without external dependencies.
+
+**Integration Tests**: Integration tests verify that different components work correctly when combined. They ensure proper data flow and system behavior across multiple integrated parts.
+
+**Testing Requirements**:
+- One unit test per function/method/class to ensure individual components work.
+- One integration test for the whole application to verify end-to-end functionality.
+- All tests must be placed in the ```/tests``` directory
+
+
 ### Development Environment
 
 We recommend the following development environment:
