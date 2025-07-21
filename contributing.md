@@ -60,7 +60,7 @@ Before you commit please install the pre-commit hooks. Only commit once they all
   - Branch naming convention is ```feature/feature_name```, ```bug/bug_name```, ```refactoring/refactoring_name```, etc.
 - Test coverage must be sufficient. 90% of your codebase must be covered by the tests in ```/tests```.
 
-#### Testing Best Practices
+### Testing
 
 **Unit Tests**: Unit tests verify individual functions, methods, or classes in isolation. They test components independently without external dependencies.
 
@@ -77,3 +77,43 @@ Before you commit please install the pre-commit hooks. Only commit once they all
 We recommend the following development environment:
 
 - [VSCode](https://code.visualstudio.com)
+
+## Workflow
+
+Follow this 6-step procedure to contribute to the project.
+
+### 1. Branch off
+Create a feature branch using naming convention `feature/name`, `bug/name`, or `refactoring/name`.
+
+```sh
+git checkout main && git pull origin main
+git checkout -b feature/feature_name
+```
+
+### 2. Code + Tests
+Write code following Python conventions and ensure 90% test coverage.
+
+```sh
+# Write unit tests in /tests/unit/ and integration tests in /tests/integration/
+```
+
+### 3. Commit (ensure hooks work locally)
+Run pre-commit hooks before committing with meaningful messages.
+
+```sh
+pre-commit run --all-files
+git add . && git commit -m "Scope: Brief summary"
+```
+
+### 4. CI checks for compliance
+Push branch and let CI validate code style, test coverage, and compliance.
+
+```sh
+git push origin feature/feature_name
+```
+
+### 5. Create PR to main
+Create a Pull Request with clear title and description, referencing GitHub Issues.
+
+### 6. Approved and merge
+Address review feedback, get approval, merge to main, then delete feature branch.
