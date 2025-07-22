@@ -16,7 +16,6 @@ from transformers import (
     AutoTokenizer,
     DataCollatorForLanguageModeling,
     Trainer,
-    TrainingArguments,
 )
 
 from .config import ModelAssistantConfig, TrainingConfig
@@ -195,8 +194,8 @@ class ModelAssistant:
             config.dataset_path, config.max_length, config.train_test_split
         )
 
-        # Setup training arguments
-        training_args = TrainingArguments(**config.training_args)
+        # Use training arguments from config
+        training_args = config.training_args
 
         # Data collator for language modeling
         data_collator = DataCollatorForLanguageModeling(
