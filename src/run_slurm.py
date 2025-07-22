@@ -7,20 +7,22 @@ support, placeholder replacement, and resource management.
 """
 
 import argparse
-import os
 import re
 import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+
 import yaml
 
-
 # Constants
-DEFAULT_TEMPLATE_PATH = "model/scripts/template.slurm"
-DEFAULT_SCRIPT_PATH = "model/train.py"
-DEFAULT_PROJECT_NAME = "NK-Landscape"
+DEFAULT_TEMPLATE_PATH = "src/slurm_scripts/template.slurm"
+DEFAULT_SCRIPT_PATH = "src/train.py"
+DEFAULT_PROJECT_NAME = "YOUR_PROJECT_NAME"
+# If this image doesn't work, please clone the llm-strategic-tuning repository
+# and build an image yourself. Guides are available in the repository.
+# https://github.com/center-for-humans-and-machines/llm-strategic-tuning
 DEFAULT_IMAGE_PATH = (
     "/u/lumi/projects/llm-strategic-tuning/images/ai_nk_trl_vllm.sif"
 )
@@ -36,6 +38,7 @@ MEMORY_PER_GPU = 125000
 
 class SlurmJobError(Exception):
     """Custom exception for SLURM job submission errors."""
+
     pass
 
 
@@ -48,9 +51,9 @@ class ConfigProcessor:
         return datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
 
     @staticmethod
-    def parse_dynamic_args(unknown_args: List[str], argv: List[str]) -> Dict[
-        str, str
-    ]:
+    def parse_dynamic_args(
+        unknown_args: List[str], argv: List[str]
+    ) -> Dict[str, str]:
         """Parse unknown command line arguments into a dictionary."""
         dynamic_args = {}
         for arg in unknown_args:
@@ -64,9 +67,9 @@ class ConfigProcessor:
                     continue
         return dynamic_args
 
-    def load_and_merge_configs(self, config_path: Union[str, Path]) -> Dict[
-        str, Any
-    ]:
+    def load_and_merge_configs(
+        self, config_path: Union[str, Path]
+    ) -> Dict[str, Any]:
         """Load main config and merge with included configurations."""
         try:
             with open(config_path, "r") as file:
@@ -91,9 +94,9 @@ class ConfigProcessor:
         """Replace placeholders in configuration with actual values."""
         return self._replace_placeholder_recursive(config, replacements)
 
-    def _load_include_config(self, include_path: Union[str, Path]) -> Dict[
-        str, Any
-    ]:
+    def _load_include_config(
+        self, include_path: Union[str, Path]
+    ) -> Dict[str, Any]:
         """Load an included configuration file."""
         try:
             with open(include_path, "r") as file:
@@ -187,7 +190,7 @@ class ConfigProcessor:
         }
 
         converter = type_converters.get(type_hint, type_converters["str"])
-        
+
         try:
             return converter(replacement_value)
         except (ValueError, AttributeError, TypeError):
@@ -212,7 +215,9 @@ class ResourceCalculator:
             n_nodes = 1
             actual_gpus = n_gpu
 
-        memory = 0 if actual_gpus >= GPUS_PER_NODE else MEMORY_PER_GPU * actual_gpus
+        memory = (
+            0 if actual_gpus >= GPUS_PER_NODE else MEMORY_PER_GPU * actual_gpus
+        )
         cpu = actual_gpus * CORES_PER_GPU
 
         return {
@@ -289,16 +294,18 @@ class SlurmSubmitter:
         else:
             try:
                 result = subprocess.run(
-                    ["sbatch", str(script_path)], 
+                    ["sbatch", str(script_path)],
                     check=True,
                     capture_output=True,
-                    text=True
+                    text=True,
                 )
                 print(f"Job submitted successfully: {result.stdout.strip()}")
             except subprocess.CalledProcessError as e:
                 raise SlurmJobError(f"Failed to submit job: {e.stderr}")
             except FileNotFoundError:
-                raise SlurmJobError("sbatch command not found. Is SLURM installed?")
+                raise SlurmJobError(
+                    "sbatch command not found. Is SLURM installed?"
+                )
 
 
 class SlurmJobManager:
@@ -315,7 +322,7 @@ class SlurmJobManager:
         parser = argparse.ArgumentParser(
             description="Submit SLURM jobs with YAML configuration support."
         )
-        
+
         # Argument configuration mapping
         argument_specs = {
             # Required arguments
@@ -324,17 +331,16 @@ class SlurmJobManager:
                 "required": True,
                 "help": "Path to the YAML configuration file.",
             },
-            
             # Optional file/path arguments
             "output_dir": {
                 "type": str,
                 "default": None,
-                "help": "Output directory path. Auto-generated if not specified.",
+                "help": "Output directory path. Auto-generated if not specified.",  # noqa: E501
             },
             "template": {
                 "type": str,
                 "default": DEFAULT_TEMPLATE_PATH,
-                "help": f"Path to SLURM script template (default: {DEFAULT_TEMPLATE_PATH})",
+                "help": f"Path to SLURM script template (default: {DEFAULT_TEMPLATE_PATH})",  # noqa: E501
             },
             "script": {
                 "type": str,
@@ -346,13 +352,11 @@ class SlurmJobManager:
                 "default": DEFAULT_IMAGE_PATH,
                 "help": "Apptainer image to use",
             },
-            
             # Boolean flags
             "dry": {
                 "action": "store_true",
                 "help": "Generate files without submitting job",
             },
-            
             # Resource arguments
             "n_gpu": {
                 "type": int,
@@ -362,9 +366,8 @@ class SlurmJobManager:
             "time": {
                 "type": str,
                 "default": DEFAULT_TIME,
-                "help": f"Runtime in HH:MM:SS format (default: {DEFAULT_TIME})",
+                "help": f"Runtime in HH:MM:SS format (default: {DEFAULT_TIME})",  # noqa: E501
             },
-            
             # Job metadata
             "job_name": {
                 "type": str,
@@ -374,7 +377,7 @@ class SlurmJobManager:
             "group_name": {
                 "type": str,
                 "default": DEFAULT_GROUP_NAME,
-                "help": f"Experiment group name (default: {DEFAULT_GROUP_NAME})",
+                "help": f"Experiment group name (default: {DEFAULT_GROUP_NAME})",  # noqa: E501
             },
             "project_name": {
                 "type": str,
@@ -382,26 +385,27 @@ class SlurmJobManager:
                 "help": f"Project to charge (default: {DEFAULT_PROJECT_NAME})",
             },
         }
-        
+
         # Use functional approach to add all arguments
         for arg_name, spec in argument_specs.items():
             parser.add_argument(f"--{arg_name}", **spec)
-        
+
         return parser
 
     def process_arguments(
         self, argv: List[str]
     ) -> Tuple[Dict[str, Any], Dict[str, str]]:
-        """Process command line arguments and return parsed args and dynamic args."""
+        """Process command line arguments and
+        return parsed args and dynamic args."""
         parser = self.create_argument_parser()
         known_args, unknown_args = parser.parse_known_args(argv[1:])
-        
+
         args_dict = vars(known_args)
         dynamic_args = self.config_processor.parse_dynamic_args(
             unknown_args, argv
         )
         args_dict.update(dynamic_args)
-        
+
         return args_dict, dynamic_args
 
     def run(self, argv: List[str]) -> None:
@@ -409,7 +413,7 @@ class SlurmJobManager:
         try:
             # Process arguments
             args_dict, dynamic_args = self.process_arguments(argv)
-            
+
             # Generate job ID and calculate resources
             job_id = self.config_processor.generate_job_id()
             resources = self.resource_calculator.calculate_resources(
@@ -417,7 +421,7 @@ class SlurmJobManager:
             )
             args_dict.update(resources)
             args_dict["job_id"] = job_id
-            
+
             # Setup output directory
             output_dir = self.file_manager.ensure_output_directory(
                 args_dict["output_dir"],
@@ -426,7 +430,7 @@ class SlurmJobManager:
                 job_id,
             )
             args_dict["output_dir"] = str(output_dir)
-            
+
             # Process configuration
             config = self.config_processor.load_and_merge_configs(
                 args_dict["config_file"]
@@ -434,22 +438,22 @@ class SlurmJobManager:
             config = self.config_processor.replace_placeholders(
                 config, args_dict
             )
-            
+
             # Copy config to output directory
             copied_config_path = self.file_manager.copy_config_to_output(
                 config, output_dir, job_id
             )
             args_dict["config_file"] = str(copied_config_path)
             args_dict["copied_config_file"] = str(copied_config_path)
-            
+
             # Generate SLURM script
             script_path = self.file_manager.generate_slurm_script(
                 args_dict["template"], output_dir, job_id, args_dict
             )
-            
+
             # Submit job
             self.submitter.submit_job(script_path, args_dict["dry"])
-            
+
         except SlurmJobError as e:
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
