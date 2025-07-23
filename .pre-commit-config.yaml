@@ -39,14 +39,8 @@ repos:
 -   repo: local
     hooks:
     -   id: check-test-coverage
-        name: Check test coverage
-        entry: bash -c '
-            poetry run coverage report --fail-under=90 ||
-            (
-                echo "Coverage data missing, running tests with coverage..." &&
-                poetry run coverage run -m pytest &&
-                poetry run coverage report --fail-under=90
-            )
-            '
+        name: Check test coverage (warning only)
+        entry: ./check-coverage.sh
         language: system
         pass_filenames: false
+        verbose: true

@@ -25,13 +25,12 @@ jobs:
     - name: Install dependencies
       run: |
         pip install poetry
-        poetry install --no-root
-        pip install pre-commit coverage pytest
+        poetry install --with dev
 
     - name: Run pre-commit checks
-      run: pre-commit run --all-files
+      run: poetry run pre-commit run --all-files
 
     - name: Run tests with coverage
       run: |
-        coverage run -m pytest
-        coverage report --fail-under=90
+        poetry run coverage run --source=src -m pytest
+        poetry run coverage report --fail-under=90
