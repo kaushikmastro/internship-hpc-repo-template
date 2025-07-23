@@ -2,7 +2,7 @@
 # This configuration uses the provided sample data and can be run immediately
 
 dataset_path: "examples/sample_data.txt"
-output_dir: "trained_models/<<<group_name>>>/<<<job_name>>>"
+output_dir: "trained_models/<<group_name>>/<<job_name>>"
 
 assistant_config:
   model_path: "gpt2"
@@ -11,7 +11,7 @@ assistant_config:
     max_new_tokens: 30
 
 training_args:
-  output_dir: "trained_models/<<<group_name>>>/<<<job_name>>>"
+  output_dir: "trained_models/<<group_name>>/<<job_name>>"
   overwrite_output_dir: true
   num_train_epochs: 1  # Quick training for demo
   per_device_train_batch_size: 2
