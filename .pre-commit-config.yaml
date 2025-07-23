@@ -32,6 +32,14 @@ repos:
             "--extend-ignore=E203,W503",
             "--max-complexity=10",
         ]
+-   repo: local
+    hooks:
+    -   id: check-test-coverage
+        name: Check test coverage (warning only)
+        entry: ./check-coverage.sh
+        language: system
+        pass_filenames: false
+        verbose: true
 -   repo: https://github.com/gitleaks/gitleaks
     rev: v8.28.0
     hooks:
