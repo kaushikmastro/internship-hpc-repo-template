@@ -11,8 +11,15 @@ management. To install:
 ### On macOS:
 1. Install pipx: `brew install pipx && pipx ensurepath`
 2. Install Poetry: `pipx install poetry`
-3. Install dependencies: `poetry install`
-4. Activate virtual environment: `poetry shell`
+3. Install project: `poetry install`
+4. Find virtual environment: `poetry env activate`
+5. Activate virtual environment: `source <<activate_file>>`
+
+### On Raven cluster
+1. load python version `module load python-waterboa/2025.06`
+2. Install project: `poetry install`
+3. Find virtual environment: `poetry env activate`
+4. Activate virtual environment: `source <<activate_file>>`
 
 ### Other systems:
 For installation on other systems, see [pipx installation docs](https://pipx.pypa.io/stable/installation/)
@@ -20,13 +27,20 @@ and [Poetry documentation](https://python-poetry.org/docs/).
 
 ## Run Project
 
-Instructions for running the project should be added here after forking.
+The documentation on how to use this project is to be found in [doc](doc/) folder. Available guides are
+
+- How to run the example training of gpt2 ([training guide](doc/run_slurm_train.md))
 
 ## Running Tests
 
 Execute tests using pytest:
 ```bash
 poetry run pytest
+```
+or if you want to get coverage report
+```bash
+poetry run coverage run --source=src -m pytest 
+&& poetry run coverage report
 ```
 
 ## Continuous Integration (CI)
