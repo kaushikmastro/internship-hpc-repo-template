@@ -71,6 +71,10 @@ Before you commit please install the pre-commit hooks. Only commit once they all
 - One integration test for the whole application to verify end-to-end functionality.
 - All tests must be placed in the ```/tests``` directory
 
+### CI
+
+All code must pass CI checks before being accepted. The CI pipeline runs pre-commit hooks (formatting, linting, security checks) and requires 90% test coverage. Check the CI status in GitHub Actions tab or pull request checks - green means ready to merge.
+
 
 ### Development Environment
 

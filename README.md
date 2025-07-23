@@ -29,6 +29,10 @@ Execute tests using pytest:
 poetry run pytest
 ```
 
+## Continuous Integration (CI)
+
+The CI system automatically runs code quality checks and tests on every push and pull request. It verifies code formatting, runs pre-commit hooks, executes the test suite, and ensures test coverage meets the 90% minimum requirement.
+
 ## Contributing
 
 Please read [contributing.md](contributing.md) for guidelines on how to
