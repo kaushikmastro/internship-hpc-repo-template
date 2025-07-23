@@ -39,7 +39,7 @@ poetry run pytest
 ```
 or if you want to get coverage report
 ```bash
-poetry run coverage run --source=src -m pytest 
+poetry run coverage run --source=src -m pytest
 && poetry run coverage report
 ```
 

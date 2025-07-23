@@ -13,7 +13,7 @@ HUGGINGFACE_TOKEN=your_hf_token_here
 WANDB_API_KEY=your_wandb_key_here
 ```
 
-### Change default names 
+### Change default names
 
 Set default names for your project in `run_slurm.py`:
 
@@ -50,7 +50,7 @@ python src/run_slurm.py \
 ## Best Practices
 
 1. **Start small**: Use `--dry` flag to validate configs
-2. **Test locally**: Run short experiments before scaling up  
+2. **Test locally**: Run short experiments before scaling up
 3. **Monitor resources**: Check GPU utilization and memory usage
 4. **Save frequently**: Use appropriate `save_steps` values
 5. **Version configs**: Keep track of successful configurations
@@ -147,25 +147,25 @@ training_args:
   per_device_train_batch_size: 4
   per_device_eval_batch_size: 4
   learning_rate: 1e-5
-  
+
   # Output and saving
   output_dir: "experiments/<<<group_name>>>/<<<job_name>>>"
   overwrite_output_dir: true
   save_strategy: "epoch"  # "no", "steps", "epoch"
   save_steps: 1000
   save_total_limit: 3
-  
+
   # Evaluation
   eval_strategy: "steps"  # "no", "steps", "epoch"
   eval_steps: 500
   load_best_model_at_end: true
   metric_for_best_model: "eval_loss"
   greater_is_better: false
-  
+
   # Logging
   logging_dir: "./logs"
   logging_steps: 10
-  
+
   # Performance
   dataloader_num_workers: 4
   fp16: true  # Enable mixed precision training
