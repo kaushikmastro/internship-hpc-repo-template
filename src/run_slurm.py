@@ -19,7 +19,13 @@ import yaml
 # Constants
 DEFAULT_TEMPLATE_PATH = "src/slurm_scripts/template.slurm"
 DEFAULT_SCRIPT_PATH = "src/train.py"
-DEFAULT_PROJECT_NAME = "YOUR_PROJECT_NAME"
+
+# Default values for job submission
+# PLEASE CHANGE THESE VALUES TO YOUR OWN PROJECT NAME AND JOB NAME
+DEFAULT_PROJECT_NAME = "hpc_repo_template"
+DEFAULT_JOB_NAME = "v1"
+DEFAULT_GROUP_NAME = "hpc_demo"
+
 # If this image doesn't work, please clone the llm-strategic-tuning repository
 # and build an image yourself. Guides are available in the repository.
 # https://github.com/center-for-humans-and-machines/llm-strategic-tuning
@@ -27,8 +33,6 @@ DEFAULT_IMAGE_PATH = (
     "/u/lumi/projects/llm-strategic-tuning/images/ai_nk_trl_vllm.sif"
 )
 DEFAULT_TIME = "00:10:00"
-DEFAULT_JOB_NAME = "v1"
-DEFAULT_GROUP_NAME = "debug"
 
 # Resource calculation constants
 GPUS_PER_NODE = 4
