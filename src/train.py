@@ -11,9 +11,9 @@ import logging
 import sys
 from pathlib import Path
 
-from .config import TrainingConfig
-from .model_assistant import ModelAssistant
-from .utils import load_config_from_yaml
+from config import TrainingConfig
+from model_assistant import ModelAssistant
+from utils import load_config_from_yaml
 
 # Configure logging
 logging.basicConfig(
@@ -113,7 +113,7 @@ def validate_training_setup(config: TrainingConfig) -> None:
 
     # Check output directory
     output_dir = Path(config.output_dir)
-    overwrite_allowed = config.training_args.get("overwrite_output_dir", False)
+    overwrite_allowed = config.training_args.overwrite_output_dir
 
     if output_dir.exists() and not overwrite_allowed:
         logger.warning(

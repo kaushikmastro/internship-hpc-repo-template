@@ -18,7 +18,7 @@ from transformers import (
     Trainer,
 )
 
-from .config import ModelAssistantConfig, TrainingConfig
+from config import ModelAssistantConfig, TrainingConfig
 
 logger = logging.getLogger(__name__)
 
